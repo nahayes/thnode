@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Copyright 2026 the Thnode Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eux
+
+mkdir -p _out
+
+do/build
+
+# For now, instrumented files are in the same dir as the originals.
+# TODO: Move them somewhere else, and delete this:
+find . -name '*.inst.*' -print0 | xargs -0 rm -f
+
+# Run lit tests. LLVM bin dir is for FileCheck.
+
+# Limit to one failure so that logs show one failure at a time.
+# LIT_ARGS="--max-failures=1"
+
+env PATH=$(llvm-config --bindir):$PATH \
+  lit test/lit --verbose ${LIT_ARGS:-}

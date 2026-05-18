@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Copyright 2026 the Thnode Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eux
+
+# Trap SIGINT (Ctrl-C) to exit the script. The loop below will restart `entr` if a SIGINT kills it.
+trap "exit" INT
+
+# Removing a file causes entr to exit.
+# Wrap in a loop to respond to the exit by rebuilding the set of files to watch and running again.
+while true; do
+  # entr expects a list of files, one per line. If you pass a single line with all files separated by spaces,
+  # entr treats it as a single "file path" (which is not what you want).
+  # Use `find ... -print0 | xargs -0` to handle spaces/newlines robustly, or just use `find ...` directly.
+  # The simplest fix is to pass the file list directly to entr, not via echo:
+  find src test/lit/ -type f '(' -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.proto' ')' '!' -name '_*' \
+    | entr -s "clear && do/test"
+done

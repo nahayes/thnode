@@ -1,0 +1,12 @@
+*~
+_*
+.DS_Store
+
+# The LIT test runner makes 'Output' directories.
+test/lit/*/Output/
+.lit_test_times.txt
+
+# TODO: Stop putting instrumented output in the same directory as the original source.
+# In this repo, it should go in dirs starting with _, so that git ignores these files.
+# Once this is done, the next line can be removed:
+*.inst.*

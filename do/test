@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Copyright 2026 the Thnode Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eux
+
+mkdir -p _out
+
+do/build
+
+# For now, instrumented files are in the same dir as the originals.
+# TODO: Move them somewhere else, and delete this:
+find . -name '*.inst.*' -print0 | xargs -0 rm -f
+
+./src/inst_rewrite.sh test/koans/unsafe_ops/unsafe_ops.c > _out/unsafe_ops_insted.c
+do/compare test/koans/unsafe_ops/unsafe_ops.c _out/unsafe_ops_insted.c || true
+gcc _out/unsafe_ops_insted.c -o _out/unsafe_ops_insted
+
+_out/unsafe_ops_insted nullptr   || echo 'EXPECT this to fail'
+_out/unsafe_ops_insted div0      || echo 'EXPECT this to fail'
+_out/unsafe_ops_insted array_idx || echo 'EXPECT this to fail'
+
+do/lit_test
+
+ALL_TESTS=$(find . -name '_*' -prune -o -type f -name 'test.sh' -print | sort)
+
+for test_script in $ALL_TESTS; do
+  $test_script
+done
+
+echo PASS: $0
