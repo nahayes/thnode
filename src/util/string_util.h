@@ -27,3 +27,5 @@ std::vector<std::string> asVectorOfStrings(int Argc, char **Argv);
 
 void replaceStringInPlace(std::string &Str, const std::string &From,
                           const std::string &To);
+
+std::string trimWhitespace(const std::string &Str);

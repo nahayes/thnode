@@ -24,6 +24,7 @@ do/build
 # TODO: Move them somewhere else, and delete this:
 find . -name '*.inst.*' -print0 | xargs -0 rm -f
 
+# Build a sample C program and check that instrumentation catches issues.
 ./src/inst_rewrite.sh test/koans/unsafe_ops/unsafe_ops.c > _out/unsafe_ops_insted.c
 do/compare test/koans/unsafe_ops/unsafe_ops.c _out/unsafe_ops_insted.c || true
 gcc _out/unsafe_ops_insted.c -o _out/unsafe_ops_insted
@@ -31,6 +32,18 @@ gcc _out/unsafe_ops_insted.c -o _out/unsafe_ops_insted
 _out/unsafe_ops_insted nullptr   || echo 'EXPECT this to fail'
 _out/unsafe_ops_insted div0      || echo 'EXPECT this to fail'
 _out/unsafe_ops_insted array_idx || echo 'EXPECT this to fail'
+
+# Build the same program as a .cpp.  Some code paths change for C vs. C++.
+# Building this way covers them.
+mkdir -p _out/unsafe_ops_cpp
+cp test/koans/unsafe_ops/unsafe_ops.c _out/unsafe_ops_cpp/unsafe_ops.cpp
+./src/inst_rewrite.sh _out/unsafe_ops_cpp/unsafe_ops.cpp > _out/unsafe_ops_cpp/unsafe_ops_insted.cpp
+do/compare out/unsafe_ops_cpp/unsafe_ops.cpp _out/unsafe_ops_cpp/unsafe_ops_insted.cpp || true
+gcc _out/unsafe_ops_cpp/unsafe_ops_insted.cpp -o _out/unsafe_ops_cpp/unsafe_ops_insted_cpp
+
+_out/unsafe_ops_cpp/unsafe_ops_insted_cpp nullptr   || echo 'EXPECT this to fail'
+_out/unsafe_ops_cpp/unsafe_ops_insted_cpp div0      || echo 'EXPECT this to fail'
+_out/unsafe_ops_cpp/unsafe_ops_insted_cpp array_idx || echo 'EXPECT this to fail'
 
 do/lit_test
 

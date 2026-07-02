@@ -27,43 +27,32 @@ REWRITTEN_SOURCE_FILE=${TEMP_DIR}/$(basename "${SOURCE_FILE}")
 
 # Path to the compiled plugin:
 PLUGIN_PATH="$PWD/_build/plugin/safety_checks_plugin.so"
+CLANG_INCLUDES_CMD="$PWD/_build/clang_includes"
 
 if [[ "${SOURCE_FILE}" =~ \.cpp$ ]]; then
+  COMPILER="clang++"
+elif [[ "${SOURCE_FILE}" =~ \.c$ ]]; then
+  COMPILER="clang"
+else
+  echo "ERROR: Unknown file extension for ${SOURCE_FILE}" >&2
+  exit 1
+fi
 
-  # Some header included by common c++ headers needs this set: ¯\_(ツ)_/¯
-  cpp_lib_defines='-D__GCC_ATOMIC_TEST_AND_SET_TRUEVAL=1'
 
-  # Run clang with our plugin to rewrite the code.
-  clang++ -cc1 \
+clang_abspath=$(which ${COMPILER})
+include_paths=$( ${CLANG_INCLUDES_CMD} ${clang_abspath} | sed 's/^/-I /' )
+
+# Some header included by common c++ headers needs this set: ¯\_(ツ)_/¯
+cpp_lib_defines='-D__GCC_ATOMIC_TEST_AND_SET_TRUEVAL=1'
+
+# Run clang with our plugin to rewrite the code.
+${COMPILER} -cc1 \
     -load "$PLUGIN_PATH" -plugin safety-checks \
-    -plugin-arg-safety-checks --config-string="suppress_line_macros: true" \
-    -I /usr/bin/../lib/gcc/aarch64-linux-gnu/11/../../../../include/c++/11 \
-    -I /usr/lib/llvm-14/lib/clang/14.0.0/include \
-    -I /usr/local/include \
-    -I /usr/include/x86_64-linux-gnu \
-    -I /usr/include \
+    ${include_paths} \
     ${cpp_lib_defines} \
     -fcxx-exceptions -fexceptions \
     "$SOURCE_FILE" > "$REWRITTEN_SOURCE_FILE"
 
-elif [[ "${SOURCE_FILE}" =~ \.c$ ]]; then
-  # Run clang with our plugin to rewrite the code.
-  clang -cc1 \
-    -load "$PLUGIN_PATH" -plugin safety-checks \
-    -plugin-arg-safety-checks --config-string="suppress_line_macros: true" \
-    -I /usr/lib/llvm-14/lib/clang/14.0.0/include \
-    -I /usr/local/include \
-    -I /usr/include/x86_64-linux-gnu \
-    -I /usr/include/linux \
-    -I /usr/include \
-    -I /usr/lib/llvm-14/lib/clang/14.0.6/include \
-    "$SOURCE_FILE" > "$REWRITTEN_SOURCE_FILE"
-
-else
-  echo "ERROR: Unknown file extension for ${SOURCE_FILE}" >&2
-  exit 1
-
-fi
 
 # Clang failing does not stop the script?
 # Test for output file.

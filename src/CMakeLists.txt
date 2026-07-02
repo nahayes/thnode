@@ -79,6 +79,7 @@ target_include_directories(compiler_wrapper PRIVATE
 
 target_link_libraries(compiler_wrapper
     util_lib
+    compiler_info_lib
 )
 
 set_target_properties(compiler_wrapper PROPERTIES
@@ -100,7 +101,7 @@ add_library(util_lib STATIC
     util/path_util.cpp
     util/string_util.cpp
 )
-target_include_directories(compiler_wrapper PRIVATE
+target_include_directories(util_lib PRIVATE
     # Added so that any code can include headers from any directory.
     ${CMAKE_SOURCE_DIR}
 )
@@ -141,6 +142,44 @@ target_link_libraries(validate_config
 set_target_properties(validate_config PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/validate_config"
 )
+
+#
+# compiler_info
+#
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/compiler_info)
+
+add_executable(clang_includes
+    compiler_info/clang_includes_main.cpp
+)
+
+add_library(compiler_info_lib STATIC
+    compiler_info/clang_includes.cpp
+)
+
+target_include_directories(compiler_info_lib PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+
+target_link_libraries(compiler_info_lib
+    util_lib
+)
+
+target_include_directories(clang_includes PRIVATE
+    # Added so that any code can include headers from any directory.
+    ${CMAKE_SOURCE_DIR}
+)
+
+target_compile_definitions(clang_includes PRIVATE
+    ${LLVM_DEFINITIONS}
+)
+
+target_link_libraries(clang_includes
+    util_lib
+    compiler_info_lib
+)
+
+
 
 #
 # Safety checks plugin.

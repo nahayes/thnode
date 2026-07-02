@@ -16,6 +16,7 @@ limitations under the License.
 
 #include "compiler_command.h"
 
+#include "compiler_info/clang_includes.h"
 #include "util/logging.h"
 #include "util/string_util.h"
 
@@ -32,6 +33,12 @@ static string deduceCompilerPluginPath() {
   std::cerr << "failed to determine the compiler plugin path; set env "
                "THNODE_PLUGIN_PATH.";
   exit(1);
+}
+
+static const vector<string> &deduceCompilerPluginIncludeFlags() {
+  static vector<string> Includes =
+      clang_include_path::getIncludePathsForCompiler("clang", true);
+  return Includes;
 }
 
 static bool hasInstrumentableExtension(const std::string &Filename) {
@@ -111,6 +118,11 @@ CompilerCommand CompilerCommand::withIncludeAdded(
   return Result;
 }
 
+static void vectorAppendAll(vector<string> &AppendTo,
+                            const vector<string> &CopyFrom) {
+  AppendTo.insert(AppendTo.end(), CopyFrom.begin(), CopyFrom.end());
+}
+
 std::vector<CompilerCommand> CompilerCommand::makeInstrumentationCommands(
     std::optional<std::string> ThnodeIncludeHeader) const {
   // Found the set of source files to be instrumented.
@@ -147,18 +159,20 @@ std::vector<CompilerCommand> CompilerCommand::makeInstrumentationCommands(
 
   static auto PluginPath = deduceCompilerPluginPath();
 
+  static auto IncludesForPlugin = deduceCompilerPluginIncludeFlags();
+
   std::vector<CompilerCommand> Results;
   for (int J = 0; J < ToInstrument.size(); J++) {
 
+    // Start with clang flags to load the plugin.
     std::vector<std::string> InstrumentCommand = {
         "clang", "-cc1", "-load", PluginPath, "-plugin", "safety-checks"};
-    InstrumentCommand.insert(InstrumentCommand.end(), FlagsToPreserve.begin(),
-                             FlagsToPreserve.end());
 
-    InstrumentCommand.push_back("-I/usr/lib/llvm-14/lib/clang/14.0.0/include");
-    InstrumentCommand.push_back("-I/usr/local/include");
-    InstrumentCommand.push_back("-I/usr/include/x86_64-linux-gnu");
-    InstrumentCommand.push_back("-I/usr/include");
+    // Add the flags that were passed to the compiler driver.
+    vectorAppendAll(InstrumentCommand, FlagsToPreserve);
+
+    // Add the -I flags the normal compiler driver sets by default.
+    vectorAppendAll(InstrumentCommand, IncludesForPlugin);
 
     // Remove any older copy of the file.
     std::filesystem::path InstFile = instrumentedVersionOf(ToInstrument[J]);

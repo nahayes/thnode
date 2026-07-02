@@ -45,3 +45,12 @@ void replaceStringInPlace(std::string &Str, const std::string &From,
     Pos += To.length();
   }
 }
+
+std::string trimWhitespace(const std::string &Str) {
+  static const std::string Whitespace = " \t\r\n";
+
+  std::string Result = Str;
+  Result.erase(0, Result.find_first_not_of(Whitespace));
+  Result.erase(Result.find_last_not_of(Whitespace) + 1);
+  return Result;
+}
