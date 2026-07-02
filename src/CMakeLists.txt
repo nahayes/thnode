@@ -113,6 +113,7 @@ add_library(util_lib STATIC
     util/logging.cpp
     util/path_util.cpp
     util/string_util.cpp
+    util/temp_dir.cpp
 )
 target_include_directories(util_lib PRIVATE
     # Added so that any code can include headers from any directory.
