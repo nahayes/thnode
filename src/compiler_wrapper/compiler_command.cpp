@@ -21,8 +21,8 @@ limitations under the License.
 #include "util/string_util.h"
 
 using std::string;
-using std::filesystem::path;
 using std::vector;
+using std::filesystem::path;
 
 static string deduceCompilerPluginPath() {
   const char *ThnodePluginPath = std::getenv("THNODE_PLUGIN_PATH");

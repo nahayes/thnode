@@ -93,8 +93,8 @@ bool AstVisitor::VisitArraySubscriptExpr(clang::ArraySubscriptExpr *ASE) {
   }
 
   Rewriter_.replaceText(HERE, ASE->getSourceRange(),
-                       std::string("ARRAY_ACCESS(") + ArrayStr.value() + ", " +
-                           IndexStr.value() + ")");
+                        std::string("ARRAY_ACCESS(") + ArrayStr.value() + ", " +
+                            IndexStr.value() + ")");
 
   return true;
 }
@@ -117,7 +117,7 @@ bool AstVisitor::VisitCallExpr(clang::CallExpr *Call) {
     clang::SourceManager &SM = Context_->getSourceManager();
     const clang::FileEntry *MainFile = SM.getFileEntryForID(SM.getMainFileID());
     const clang::FileEntry *ExprFile =
-    SM.getFileEntryForID(SM.getFileID(Call->getExprLoc()));
+        SM.getFileEntryForID(SM.getFileID(Call->getExprLoc()));
     if (ExprFile != MainFile) {
       return true;
     }
@@ -162,7 +162,7 @@ bool AstVisitor::VisitBinaryOperator(clang::BinaryOperator *OP) {
     clang::SourceManager &SM = Context_->getSourceManager();
     const clang::FileEntry *MainFile = SM.getFileEntryForID(SM.getMainFileID());
     const clang::FileEntry *ExprFile =
-    SM.getFileEntryForID(SM.getFileID(OP->getExprLoc()));
+        SM.getFileEntryForID(SM.getFileID(OP->getExprLoc()));
     if (ExprFile != MainFile) {
       return true;
     }

@@ -1,6 +1,7 @@
+#include <string.h>
+
 #include <filesystem>
 #include <iostream>
-#include <string.h>
 #include <string>
 #include <vector>
 

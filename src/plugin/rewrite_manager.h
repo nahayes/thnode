@@ -162,7 +162,7 @@ public:
     const auto Line = Ploc.getLine();
     const int MaxLineLen = 100000;
     clang::SourceLocation EndOfLineLoc =
-    SM.translateLineCol(FileId, Line, MaxLineLen);
+        SM.translateLineCol(FileId, Line, MaxLineLen);
 
     Rewriter_.InsertText(EndOfLineLoc, Str, true, true);
   }
