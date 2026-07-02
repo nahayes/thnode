@@ -14,7 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -eux
+set -euo pipefail
+
+# If any command fails, print an error and exit.
+script_abspath="$(readlink -f "$0")"
+trap 'echo "ERROR: ${script_abspath}:$LINENO" >&2' ERR
 
 # find the source file.
 SOURCE_FILE=$1
@@ -27,7 +31,7 @@ REWRITTEN_SOURCE_FILE=${TEMP_DIR}/$(basename "${SOURCE_FILE}")
 
 # Path to the compiled plugin:
 PLUGIN_PATH="$PWD/_build/plugin/safety_checks_plugin.so"
-CLANG_INCLUDES_CMD="$PWD/_build/clang_includes"
+CLANG_INCLUDES_CMD="$PWD/_build/compiler_info/clang_includes"
 
 if [[ "${SOURCE_FILE}" =~ \.cpp$ ]]; then
   COMPILER="clang++"
