@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 project(SafetyChecksPlugin)
 
@@ -26,6 +26,19 @@ find_package(Protobuf REQUIRED)
 # Creates _build/compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+
+# Include GoogleTest.
+#
+# The hash in the github URL is the commit for versiuon 1.17.0.
+# It was committed on 4/30/2025.
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/52eb8108c5bdec04579160ae17225d66034bd723.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 #
 # Generate protobuf files
@@ -110,6 +123,27 @@ set_target_properties(util_lib PROPERTIES
     PREFIX ""
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/util"
 )
+
+
+enable_testing()
+
+add_executable(string_util_test
+    util/string_util_test.cpp
+)
+
+target_include_directories(string_util_test PRIVATE
+    ${CMAKE_SOURCE_DIR}
+)
+
+target_link_libraries(string_util_test
+    util_lib
+    gtest
+    gtest_main
+    pthread
+)
+
+add_test(NAME string_util_test COMMAND string_util_test)
+
 
 
 #

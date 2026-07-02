@@ -16,9 +16,14 @@
 
 set -eux
 
-mkdir -p _out
-
 do/build
+
+# C++ unit tests are run by cmake:
+pushd _build
+  ctest . --output-on-failure
+popd
+
+mkdir -p _out
 
 # For now, instrumented files are in the same dir as the originals.
 # TODO: Move them somewhere else, and delete this:

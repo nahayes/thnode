@@ -39,17 +39,8 @@ std::vector<std::string> asVectorOfStrings(int Argc, char **Argv) {
   return Result;
 }
 
-void replaceInPlace(std::string &Str, const std::string &From,
-                    const std::string &To) {
-  std::string::size_type Pos = 0;
-  while ((Pos = Str.find(From, Pos)) != std::string::npos) {
-    Str.replace(Pos, From.length(), To);
-    Pos += To.length();
-  }
-}
-
 std::string trimWhitespace(const std::string &Str) {
-  static const std::string Whitespace = " \t\r\n";
+  static const std::string Whitespace = " \t\r\n\v";
 
   std::string Result = Str;
   Result.erase(0, Result.find_first_not_of(Whitespace));
@@ -57,4 +48,4 @@ std::string trimWhitespace(const std::string &Str) {
   return Result;
 }
 
-}  // namespace strings
+} // namespace strings

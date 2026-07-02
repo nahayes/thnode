@@ -32,4 +32,4 @@ void replaceInPlace(std::string &Str, const std::string &From,
 
 std::string trimWhitespace(const std::string &Str);
 
-}  // namespace strings
+} // namespace strings
