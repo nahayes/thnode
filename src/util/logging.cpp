@@ -22,8 +22,6 @@ limitations under the License.
 
 namespace logging {
 
-int GDebugLevel = 0;
-
 static int getIntFromEnvVar(const char *EnvVar, int DefaultIfUnset = 0,
                             int DefaultIfSet = 1) {
   const char *Value = getenv(EnvVar);
@@ -83,10 +81,16 @@ static int deduceDebugLevel() {
   return static_cast<int>(Result);
 }
 
-void init() {
-  GDebugLevel = deduceDebugLevel();
-  LOG(1) << "debug level: " << logging::GDebugLevel;
-}
+int GDebugLevel = 0;
+
+// Ensure init() is called before main() using a static initializer.
+struct LoggingInitializer {
+  LoggingInitializer() {
+    GDebugLevel = deduceDebugLevel();
+    LOG(1) << "debug level: " << logging::GDebugLevel;
+  }
+};
+static LoggingInitializer LI;
 
 std::string rfcTimestamp() {
   using namespace std::chrono;

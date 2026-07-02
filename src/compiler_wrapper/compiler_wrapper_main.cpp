@@ -152,8 +152,6 @@ int instrumentAndBuildInSameDir(const CompilerCommand &Cmd) {
 }
 
 int main(int argc, char **argv, char **envp) {
-  logging::init();
-
   CompilerCommand Cmd(argc, argv);
 
   return instrumentAndBuildInSameDir(Cmd);

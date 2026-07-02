@@ -10,8 +10,6 @@
 using std::string;
 
 int main(int argc, char *argv[]) {
-  logging::init();
-
   if (argc < 2) {
     std::cerr
         << "Error: provide a path to clang or clang++ as the only argument."

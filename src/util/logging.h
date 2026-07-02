@@ -21,11 +21,8 @@ limitations under the License.
 
 namespace logging {
 
-void init();
-
-// This symbol is exposed because it is used by the LOG() macro:
+// These symbols are exposed because it is used by the LOG() macro:
 extern int GDebugLevel;
-
 std::string rfcTimestamp();
 
 } // namespace logging
