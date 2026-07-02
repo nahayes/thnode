@@ -45,7 +45,7 @@ getIncludePathsForCompiler(const std::filesystem::path &ClangPath,
     }
 
     if (InSearch) {
-      std::string Trimmed = trimWhitespace(Line);
+      std::string Trimmed = strings::trimWhitespace(Line);
       if (!Trimmed.empty() && Trimmed[0] == '/') {
         if (AddDashI) {
           Trimmed = "-I " + Trimmed;

@@ -19,13 +19,17 @@ limitations under the License.
 #include <string>
 #include <vector>
 
+namespace strings {
+
 bool startsWith(const std::string &Str, const std::string &Prefix);
 
 bool endsWith(const std::string &Str, const std::string &Suffix);
 
 std::vector<std::string> asVectorOfStrings(int Argc, char **Argv);
 
-void replaceStringInPlace(std::string &Str, const std::string &From,
-                          const std::string &To);
+void replaceInPlace(std::string &Str, const std::string &From,
+                    const std::string &To);
 
 std::string trimWhitespace(const std::string &Str);
+
+}  // namespace strings

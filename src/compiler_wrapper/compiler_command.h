@@ -30,7 +30,7 @@ limitations under the License.
 class CompilerCommand {
 public:
   CompilerCommand(int Argc, char **Argv)
-      : Argv_(asVectorOfStrings(Argc, Argv)) {}
+      : Argv_(strings::asVectorOfStrings(Argc, Argv)) {}
 
 protected:
   CompilerCommand(std::vector<std::string> Argv,

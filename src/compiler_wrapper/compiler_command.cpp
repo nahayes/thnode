@@ -42,10 +42,10 @@ static const vector<string> &deduceCompilerPluginIncludeFlags() {
 }
 
 static bool hasInstrumentableExtension(const std::string &Filename) {
-  if (endsWith(Filename, ".c"))
+  if (strings::endsWith(Filename, ".c"))
     return true;
 
-  if (endsWith(Filename, ".cpp"))
+  if (strings::endsWith(Filename, ".cpp"))
     return true;
 
   return false;
@@ -144,11 +144,11 @@ std::vector<CompilerCommand> CompilerCommand::makeInstrumentationCommands(
   // plugin.
   std::vector<std::string> FlagsToPreserve;
   for (int I = 1; I < Argv_.size(); I++) {
-    if (startsWith(Argv_[I], "-D")) {
+    if (strings::startsWith(Argv_[I], "-D")) {
       FlagsToPreserve.push_back(Argv_[I]);
       continue;
     }
-    if (startsWith(Argv_[I], "-I")) {
+    if (strings::startsWith(Argv_[I], "-I")) {
       FlagsToPreserve.push_back(Argv_[I]);
       continue;
     }

@@ -16,6 +16,8 @@ limitations under the License.
 
 #include "string_util.h"
 
+namespace strings {
+
 bool startsWith(const std::string &Str, const std::string &Prefix) {
   if (Str.size() < Prefix.size())
     return false;
@@ -37,8 +39,8 @@ std::vector<std::string> asVectorOfStrings(int Argc, char **Argv) {
   return Result;
 }
 
-void replaceStringInPlace(std::string &Str, const std::string &From,
-                          const std::string &To) {
+void replaceInPlace(std::string &Str, const std::string &From,
+                    const std::string &To) {
   std::string::size_type Pos = 0;
   while ((Pos = Str.find(From, Pos)) != std::string::npos) {
     Str.replace(Pos, From.length(), To);
@@ -54,3 +56,5 @@ std::string trimWhitespace(const std::string &Str) {
   Result.erase(Result.find_last_not_of(Whitespace) + 1);
   return Result;
 }
+
+}  // namespace strings
