@@ -8,7 +8,6 @@
 #include "util/logging.h"
 
 using std::string;
-using std::vector;
 
 int main(int argc, char *argv[]) {
   logging::init();

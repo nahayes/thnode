@@ -68,7 +68,7 @@ set_target_properties(config_pb_lib PROPERTIES
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/compiler_wrapper)
 
 add_executable(compiler_wrapper
-    compiler_wrapper/compiler_wrapper.cpp
+    compiler_wrapper/compiler_wrapper_main.cpp
     compiler_wrapper/compiler_command.cpp
 )
 
