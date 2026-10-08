@@ -16,8 +16,8 @@ do so.  Thnode acts as a second line of defense.
 
 ## How is Thnode implemented?
 
-Thnode rewrites your program at build time, adding macros around potentially unsafe
-operations, This is implemented as a [clang plugin](https://clang.llvm.org/docs/ClangPlugins.html).
+Thnode rewrites your program at build time, adding macros around potentially unsafe operations.
+This is implemented as a [clang plugin](https://clang.llvm.org/docs/ClangPlugins.html).
 
 Developers provide implementations of the macros, which check for and deal with errors.
 We provide default implementations that log errors and stop the program.
@@ -47,9 +47,9 @@ We provide a standard definition of `NULL_CHECK` that aborts the program if the 
 
 ```C
 #define NULL_CHECK(ptrExpr, ptrType) \
-  ( (ptrType) my_null_check((void *)ptrExpr, #ptrExpr, __FILE__, __LINE__) )
+  ( (ptrType) thnode_null_check((void *)ptrExpr, #ptrExpr, __FILE__, __LINE__) )
 
-void *thnode_null_check(void *ptr, const char *expr, const char *file, int line) {
+void* thnode_null_check(void *ptr, const char *expr, const char *file, int line) {
   if (ptr == NULL) {
     fprintf(stderr, "[ERROR] Dereferencing NULL pointer %p in expression %s; at %s:%d\n", ptr, expr, file, line);
     abort();
@@ -59,7 +59,8 @@ void *thnode_null_check(void *ptr, const char *expr, const char *file, int line)
 }
 ```
 
-You can easily define your own `NULL_CHECK`.  Suppose your program needs to release some resource on exit.  You can do this with the following code:
+You can easily define your own `NULL_CHECK`. Suppose your program needs to release some resource on exit.
+You can do this with the following code:
 
 ```C
 // In a header:
@@ -67,7 +68,7 @@ You can easily define your own `NULL_CHECK`.  Suppose your program needs to rel
   ( (ptrType)my_custom_null_check((void *)ptrExpr, #ptrExpr, __FILE__, __LINE__) )
 
 // In a .c file:
-void *my_custom_null_check(void *ptr, const char *expr, const char *file, int line) {
+void* my_custom_null_check(void *ptr, const char *expr, const char *file, int line) {
   if (ptr == NULL) {
     write_log("NULL pointer dereference at %s:%d, gracefully shutting down...\n", file, line);
     release_all_resources_for_shutdown();
@@ -88,7 +89,7 @@ The latest versions of GCC and Clang do have features that can insert checks for
 these issues.  Developers using older compilers (to support older OS versions) don't have
 access to these features.
 
-### Why not rewrite all code in a safer language?
+### Why not rewrite all code in a safe language?
 
 If you can do this, you should.  In many cases, rewriting is not feasible.  Large legacy
 codebases and third party library code are two common cases where a rewrite is not
