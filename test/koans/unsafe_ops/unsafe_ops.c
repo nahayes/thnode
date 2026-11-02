@@ -23,7 +23,7 @@ limitations under the License.
 // TODO: null and div0 checks call assert(). They should include assert.h.
 #include <assert.h>
 
-void* my_null_check(void *ptr, char *expr, char *file, int line) {
+void* my_null_check(void *ptr, const char *expr, const char *file, int line) {
   if (ptr == NULL) {
     fprintf(stderr, "ERROR; for expression %s got NULL pointer; at %s:%d\n", expr, file, line);
     abort();
@@ -35,7 +35,7 @@ void* my_null_check(void *ptr, char *expr, char *file, int line) {
 
 
 // Check for array underflow.
-static int check_array_idx_ge_zero(int idx, char* file, int line) {
+static int check_array_idx_ge_zero(int idx, const char* file, int line) {
     if (idx < 0) {
         fprintf(stderr, "ERROR; got array access at index %d; want a value >=0; at %s:%d\n", idx, file, line);
         abort();
