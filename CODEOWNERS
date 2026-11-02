@@ -1,0 +1,8 @@
+# The rules of the repo:
+#
+#  1. All code submitted should be reviewed by at least one person other than the author.
+#  2. Prefer pre-commit review.  Only submit without review to roll back a breaking change.
+
+# Global owners: Fallback if no specific path matches.
+@nahayes @skerner
+
